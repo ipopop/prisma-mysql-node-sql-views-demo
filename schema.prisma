@@ -1,0 +1,33 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String?  @db.VarChar(256)
+  content   String?  @db.VarChar(256)
+  published Boolean?
+  authorId  Int?
+  User      User?    @relation(fields: [authorId], references: [id])
+
+  @@index([authorId], name: "author")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  name  String? @db.VarChar(256)
+  email String? @unique @db.VarChar(256)
+  Post  Post[]
+}
+
+model Draft {
+  title     String
+  id        Int     @unique
+  email     String
+  published Boolean
+}
